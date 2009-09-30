@@ -1,0 +1,124 @@
+%define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+
+Name:      etckeeper
+Version:   0.41
+Release:   1%{?dist}
+Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
+Group:     Applications/System
+License:   GPLv2+
+URL:       http://kitenet.net/~joey/code/etckeeper/
+Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch: noarch
+Requires:  git >= 1.6
+
+%description
+The etckeeper program is a tool to let /etc be stored in a git,
+mercurial, bzr or darcs repository. It hooks into yum to automatically
+commit changes made to /etc during package upgrades. It tracks file
+metadata that version control systems do not normally support, but that
+is important for /etc, such as the permissions of /etc/shadow. It's
+quite modular and configurable, while also being simple to use if you
+understand the basics of working with version control.
+
+The default backend is git, if want to use a another backend please
+install the appropriate tool (mercurial, darcs or bzr).
+To use bzr as backend, please also install the %{name}-bzr package.
+
+To start using the package please read %{_docdir}/%{name}-%{version}/README
+
+%package bzr
+Summary:  Support for bzr with etckeeper
+Group:    Applications/System
+Requires: %{name} = %{version}-%{release} bzr
+BuildRequires: bzr
+BuildRequires: python-devel
+
+%description bzr
+This package provides a bzr backend for etckeeper, if you want to use
+etckeeper with bzr backend, install this package.
+
+%prep
+%setup -q -n %{name}
+%{__perl} -pi -e '
+    s|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|;
+    s|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|;
+    ' etckeeper.conf
+%{__sed} -i -e '1d' yum-etckeeper.py 
+
+%build
+make %{?_smp_mflags}
+
+%install
+rm -rf %{buildroot}
+make install DESTDIR=%{buildroot} INSTALL="%{__install} -p"
+%{__install} -D -p debian/cron.daily %{buildroot}%{_sysconfdir}/cron.daily/%{name}
+%{__install} -d  %{buildroot}%{_localstatedir}/cache/%{name}
+%{__sed} -i -e '1d' %{buildroot}%{python_sitelib}/bzrlib/plugins/%{name}/__init__.py
+
+%clean
+rm -rf %{buildroot}
+
+# Users must study the README anyway.
+#post
+#{_sbindir}/%{name} init -d /etc/
+
+%files
+%defattr(-, root, root, -)
+%doc GPL INSTALL TODO README
+%{_sbindir}/%{name}
+%{_mandir}/man8/%{name}.8*
+%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/%{name}/*.d
+%{_sysconfdir}/%{name}/*.d/
+%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
+%{_sysconfdir}/cron.daily/%{name}
+%dir %{_sysconfdir}/bash_completion.d
+%config(noreplace) %{_sysconfdir}/bash_completion.d/%{name}
+%dir %{_prefix}/lib/yum-plugins
+%{_prefix}/lib/yum-plugins/%{name}.*
+%dir %{_sysconfdir}/yum/pluginconf.d
+%config(noreplace) %{_sysconfdir}/yum/pluginconf.d/%{name}.conf
+%{_localstatedir}/cache/%{name}
+
+%files bzr
+%defattr(-, root, root, -)
+%doc GPL
+%{python_sitelib}/bzrlib/plugins/%{name}
+%{python_sitelib}/bzr_%{name}-*.egg-info
+
+%changelog
+* Sat Sep 12 2009 Bernie Innocenti <bernie@codewiz.org> - 0.41-1
+- Updatte to 0.41
+- Add missing directory ownerships
+
+* Sat Sep 12 2009 Bernie Innocenti <bernie@codewiz.org> - 0.40-3
+- Make the bzr subpackage builddepend on python-devel
+
+* Wed Sep 09 2009 Terje Rosten <terje.rosten@ntnu.no> - 0.40-2
+- Package is noarch
+- Rpmlint clean
+- Random cleanup
+- Ship cache dir in package
+- bzr subpackage
+- Add bzr to buildreq
+
+* Sat Sep 05 2009 Bernie Innocenti <bernie@codewiz.org> - 0.40-1
+- Update to 0.40
+
+* Sun Jun 14 2009 Bernie Innocenti <bernie@codewiz.org> - 0.37-1
+- Update to 0.37
+- Change license tag to GPLv2+
+
+* Fri Feb 27 2009 Jimmy Tang <jtang@tchpc.tcd.ie> - 0.33-4
+- fix up initial install to make directory in /var/cache/etckeeper
+- install the etckeeper daily cron job
+- define some config files that shouldn't be replaced, should the hooks
+in commit.d, init.d etc... saved and not blown away? if so they can
+defined as config files. etckeeper should record the changes anyway.
+
+* Wed Feb 25 2009 Jimmy Tang <jtang@tchpc.tcd.ie> - 0.32-1
+- yum etckeeper plugin is now apart of this package
+
+* Tue Feb 24 2009 Jimmy Tang <jtang@tchpc.tcd.ie> - 0.31-1
+- initial package
