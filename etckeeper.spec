@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.41
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -88,6 +88,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/bzr_%{name}-*.egg-info
 
 %changelog
+* Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 0.41-2
+- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+
 * Sat Sep 12 2009 Bernie Innocenti <bernie@codewiz.org> - 0.41-1
 - Updatte to 0.41
 - Add missing directory ownerships
