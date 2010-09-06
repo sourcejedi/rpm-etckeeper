@@ -1,13 +1,15 @@
 %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.41
-Release:   2%{?dist}
+Version:   0.48
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
 URL:       http://kitenet.net/~joey/code/etckeeper/
 Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
+# this is from rev 60747c8d, will be in 0.49. fixes bz 588086.
+Patch0:    etckeeper-0.48-fix_path.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires:  git >= 1.6
@@ -40,6 +42,7 @@ etckeeper with bzr backend, install this package.
 
 %prep
 %setup -q -n %{name}
+%patch0 -p1 -b .path
 %{__perl} -pi -e '
     s|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|;
     s|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|;
@@ -69,8 +72,7 @@ rm -rf %{buildroot}
 %{_sbindir}/%{name}
 %{_mandir}/man8/%{name}.8*
 %dir %{_sysconfdir}/%{name}
-%dir %{_sysconfdir}/%{name}/*.d
-%{_sysconfdir}/%{name}/*.d/
+%{_sysconfdir}/%{name}/*.d
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %{_sysconfdir}/cron.daily/%{name}
 %dir %{_sysconfdir}/bash_completion.d
@@ -88,6 +90,11 @@ rm -rf %{buildroot}
 %{python_sitelib}/bzr_%{name}-*.egg-info
 
 %changelog
+* Fri Sep  3 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.48-1
+- Update to 0.48.
+- Don't list /etc/etckeeper/*.d directories twice in %%files.
+- Add patch from upstream that fixes bz 588086.
+
 * Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 0.41-2
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
