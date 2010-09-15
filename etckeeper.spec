@@ -1,15 +1,13 @@
 %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.48
+Version:   0.49
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
 URL:       http://kitenet.net/~joey/code/etckeeper/
 Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
-# this is from rev 60747c8d, will be in 0.49. fixes bz 588086.
-Patch0:    etckeeper-0.48-fix_path.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires:  git >= 1.6
@@ -42,7 +40,6 @@ etckeeper with bzr backend, install this package.
 
 %prep
 %setup -q -n %{name}
-%patch0 -p1 -b .path
 %{__perl} -pi -e '
     s|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|;
     s|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|;
@@ -90,6 +87,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/bzr_%{name}-*.egg-info
 
 %changelog
+* Wed Sep 15 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.49-1
+- Update to 0.49.
+- Remove obsolete patch.
+
 * Fri Sep  3 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.48-1
 - Update to 0.48.
 - Don't list /etc/etckeeper/*.d directories twice in %%files.
