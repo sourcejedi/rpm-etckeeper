@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.49
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -10,7 +10,7 @@ URL:       http://kitenet.net/~joey/code/etckeeper/
 Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
-Requires:  git >= 1.6
+Requires:  git >= 1.5.4
 
 %description
 The etckeeper program is a tool to let /etc be stored in a git,
@@ -84,9 +84,15 @@ rm -rf %{buildroot}
 %defattr(-, root, root, -)
 %doc GPL
 %{python_sitelib}/bzrlib/plugins/%{name}
+%if 0%{?fedora} || 0%{?rhel} > 5
 %{python_sitelib}/bzr_%{name}-*.egg-info
+%endif
 
 %changelog
+* Fri Sep 17 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.49-2
+- Adjust minimum required version of GIT.
+- egg-info files are not created automatically on RHEL5.
+
 * Wed Sep 15 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.49-1
 - Update to 0.49.
 - Remove obsolete patch.
@@ -100,7 +106,7 @@ rm -rf %{buildroot}
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
 * Sat Sep 12 2009 Bernie Innocenti <bernie@codewiz.org> - 0.41-1
-- Updatte to 0.41
+- Update to 0.41
 - Add missing directory ownerships
 
 * Sat Sep 12 2009 Bernie Innocenti <bernie@codewiz.org> - 0.40-3
