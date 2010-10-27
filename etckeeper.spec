@@ -1,8 +1,8 @@
-%define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+%global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.49
-Release:   2%{?dist}
+Version:   0.50
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -89,6 +89,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Oct 27 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.50-1
+- Update to 0.50.
+- Change %%define -> %%global.
+
 * Fri Sep 17 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.49-2
 - Adjust minimum required version of GIT.
 - egg-info files are not created automatically on RHEL5.
