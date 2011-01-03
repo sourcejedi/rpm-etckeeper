@@ -1,8 +1,8 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.50
-Release:   2%{?dist}
+Version:   0.51
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -66,7 +66,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-, root, root, -)
 %doc GPL TODO README
-%{_sbindir}/%{name}
+%{_bindir}/%{name}
 %{_mandir}/man8/%{name}.8*
 %dir %{_sysconfdir}/%{name}
 %{_sysconfdir}/%{name}/*.d
@@ -89,6 +89,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Jan  3 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.51-1
+- Update to 0.51.
+- etckeeper has been moved out of sbin.
+
 * Sat Dec 11 2010 Thomas Moschny <thomas.moschny@gmx.de> - 0.50-2
 - Don't package INSTALL.
 
