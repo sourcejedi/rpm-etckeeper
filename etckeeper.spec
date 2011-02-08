@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.51
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -89,6 +89,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.51-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Mon Jan  3 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.51-1
 - Update to 0.51.
 - etckeeper has been moved out of sbin.
