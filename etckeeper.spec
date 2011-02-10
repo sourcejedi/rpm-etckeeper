@@ -1,13 +1,14 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.51
-Release:   2%{?dist}
+Version:   0.52
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
 URL:       http://kitenet.net/~joey/code/etckeeper/
 Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
+Source1:   README.fedora
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires:  git >= 1.5.4
@@ -44,7 +45,8 @@ etckeeper with bzr backend, install this package.
     s|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|;
     s|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|;
     ' etckeeper.conf
-%{__sed} -i -e '1d' yum-etckeeper.py 
+%{__sed} -i -e '1d' yum-etckeeper.py
+cp -av %{SOURCE1} .
 
 %build
 make %{?_smp_mflags}
@@ -65,7 +67,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root, -)
-%doc GPL TODO README
+%doc GPL TODO README README.fedora
 %{_bindir}/%{name}
 %{_mandir}/man8/%{name}.8*
 %dir %{_sysconfdir}/%{name}
@@ -89,6 +91,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Feb  9 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.52-1
+- Update to 0.52.
+- Include a README.fedora (bz 670934).
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.51-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
