@@ -1,7 +1,7 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.52
+Version:   0.53
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -65,6 +65,11 @@ rm -rf %{buildroot}
 #post
 #{_sbindir}/%{name} init -d /etc/
 
+%post
+if [ $1 -gt 1 ] ; then
+   %{_bindir}/%{name} update-ignore
+fi
+
 %files
 %defattr(-, root, root, -)
 %doc GPL TODO README README.fedora
@@ -91,6 +96,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Mar 28 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.53-1
+- Update to 0.53.
+- Run update-ignore on package upgrade (bz 680632).
+
 * Wed Feb  9 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.52-1
 - Update to 0.52.
 - Include a README.fedora (bz 670934).
