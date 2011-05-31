@@ -1,7 +1,7 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.53
+Version:   0.54
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -9,6 +9,9 @@ License:   GPLv2+
 URL:       http://kitenet.net/~joey/code/etckeeper/
 Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
 Source1:   README.fedora
+# Upstream commit 394add71: Fix error propagation to yum, which makes
+# AVOID_COMMIT_BEFORE_INSTALL work (bz 709487)
+Patch0:    etckeeper-0.54-yum.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires:  git >= 1.5.4
@@ -41,6 +44,7 @@ etckeeper with bzr backend, install this package.
 
 %prep
 %setup -q -n %{name}
+%patch0 -p1
 %{__perl} -pi -e '
     s|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|;
     s|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|;
@@ -96,6 +100,10 @@ fi
 %endif
 
 %changelog
+* Wed Jun  1 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.54-1
+- Update to 0.54.
+- Add patch for bz 709487.
+
 * Mon Mar 28 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.53-1
 - Update to 0.53.
 - Run update-ignore on package upgrade (bz 680632).
