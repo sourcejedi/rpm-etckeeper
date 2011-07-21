@@ -1,7 +1,7 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.55
+Version:   0.56
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -96,6 +96,9 @@ fi
 %endif
 
 %changelog
+* Thu Jul 21 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.56-1
+- Update to 0.56.
+
 * Fri Jun 24 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.55-1
 - Update to 0.55.
 
