@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.56
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -96,6 +96,9 @@ fi
 %endif
 
 %changelog
+* Wed Aug 17 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.56-2
+- Rebuilt for trailing slash bug of rpm-4.9.1
+
 * Thu Jul 21 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.56-1
 - Update to 0.56.
 
