@@ -1,8 +1,8 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.56
-Release:   2%{?dist}
+Version:   0.57
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -96,6 +96,9 @@ fi
 %endif
 
 %changelog
+* Wed Nov  9 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.57-1
+- Update to 0.57.
+
 * Wed Aug 17 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.56-2
 - Rebuilt for trailing slash bug of rpm-4.9.1
 
