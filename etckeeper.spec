@@ -1,7 +1,7 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.57
+Version:   0.58
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -61,10 +61,6 @@ make install DESTDIR=%{buildroot} INSTALL="%{__install} -p"
 %clean
 rm -rf %{buildroot}
 
-# Users must study the README anyway.
-#post
-#{_sbindir}/%{name} init -d /etc/
-
 %post
 if [ $1 -gt 1 ] ; then
    %{_bindir}/%{name} update-ignore
@@ -96,6 +92,9 @@ fi
 %endif
 
 %changelog
+* Thu Dec  1 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.58-1
+- Update to 0.58.
+
 * Wed Nov  9 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.57-1
 - Update to 0.57.
 
