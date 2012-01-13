@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.58
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -92,6 +92,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.58-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Thu Dec  1 2011 Thomas Moschny <thomas.moschny@gmx.de> - 0.58-1
 - Update to 0.58.
 
