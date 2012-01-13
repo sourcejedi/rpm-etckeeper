@@ -1,8 +1,8 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.58
-Release:   2%{?dist}
+Version:   0.60
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -92,6 +92,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 13 2012 Thomas Moschny <thomas.moschny@gmx.de> - 0.60-1
+- Update to 0.60.
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.58-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
