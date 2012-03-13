@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.62
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -12,6 +12,7 @@ Source1:   README.fedora
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires:  git >= 1.5.4
+Requires:  perl
 
 %description
 The etckeeper program is a tool to let /etc be stored in a git,
@@ -92,6 +93,9 @@ fi
 %endif
 
 %changelog
+* Tue Mar 13 2012 Thomas Moschny <thomas.moschny@gmx.de> - 0.62-2
+- Add missing dependency on perl (bz 798563).
+
 * Tue Mar 13 2012 Thomas Moschny <thomas.moschny@gmx.de> - 0.62-1
 - Update to 0.62.
 
