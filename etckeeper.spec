@@ -1,8 +1,8 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   0.62
-Release:   2%{?dist}
+Version:   0.63
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -93,6 +93,9 @@ fi
 %endif
 
 %changelog
+* Mon Jun  4 2012 Thomas Moschny <thomas.moschny@gmx.de> - 0.63-1
+- Update to 0.63.
+
 * Tue Mar 13 2012 Thomas Moschny <thomas.moschny@gmx.de> - 0.62-2
 - Add missing dependency on perl (bz 798563).
 
