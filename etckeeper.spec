@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   0.64
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -93,6 +93,9 @@ fi
 %endif
 
 %changelog
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.64-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Sun Sep 23 2012 Thomas Moschny <thomas.moschny@gmx.de> - 0.64-1
 - Update to 0.64.
 
