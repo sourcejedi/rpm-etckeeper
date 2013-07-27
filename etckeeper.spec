@@ -2,7 +2,7 @@
 
 Name:      etckeeper
 Version:   1.4
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -13,6 +13,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires:  git >= 1.5.4
 Requires:  perl
+Requires:  crontabs
 
 %description
 The etckeeper program is a tool to let /etc be stored in a git,
@@ -93,6 +94,9 @@ fi
 %endif
 
 %changelog
+* Sat Jul 27 2013 Jóhann B. Guðmundsson <johannbg@fedoraproject.org> - 1.4-2
+- Add a missing requirement on crontabs to spec file
+
 * Sun Jun 23 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.4-1
 - Update to 1.4.
 
