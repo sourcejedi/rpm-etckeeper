@@ -1,8 +1,8 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 Name:      etckeeper
-Version:   1.4
-Release:   2%{?dist}
+Version:   1.5
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -94,6 +94,9 @@ fi
 %endif
 
 %changelog
+* Sat Jul 27 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.5-1
+- Update to 1.5.
+
 * Sat Jul 27 2013 Jóhann B. Guðmundsson <johannbg@fedoraproject.org> - 1.4-2
 - Add a missing requirement on crontabs to spec file
 
