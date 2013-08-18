@@ -1,4 +1,5 @@
 %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:      etckeeper
 Version:   1.7
@@ -28,7 +29,7 @@ The default backend is git, if want to use a another backend please
 install the appropriate tool (mercurial, darcs or bzr).
 To use bzr as backend, please also install the %{name}-bzr package.
 
-To start using the package please read %{_docdir}/%{name}-%{version}/README
+To start using the package please read %{_pkgdocdir}/README.
 
 %package bzr
 Summary:  Support for bzr with etckeeper
@@ -96,6 +97,7 @@ fi
 %changelog
 * Sun Aug 18 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.7-1
 - Update to 1.7.
+- Define (if undefined) and use _pkgdocdir macro (rhbz#993741).
 
 * Tue Jul 30 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.6-1
 - Update to 1.6.
