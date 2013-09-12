@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:      etckeeper
-Version:   1.7
+Version:   1.9
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -95,6 +95,9 @@ fi
 %endif
 
 %changelog
+* Thu Sep 12 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.9-1
+- Update to 1.9.
+
 * Sun Aug 18 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.7-1
 - Update to 1.7.
 - Define (if undefined) and use _pkgdocdir macro (rhbz#993741).
