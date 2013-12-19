@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:      etckeeper
-Version:   1.10
+Version:   1.11
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -95,6 +95,9 @@ fi
 %endif
 
 %changelog
+* Thu Dec 19 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.11-1
+- Update to 1.11.
+
 * Sat Nov  9 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.10-1
 - Update to 1.10.
 
