@@ -3,7 +3,7 @@
 
 Name:      etckeeper
 Version:   1.11
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -95,6 +95,9 @@ fi
 %endif
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.11-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Thu Dec 19 2013 Thomas Moschny <thomas.moschny@gmx.de> - 1.11-1
 - Update to 1.11.
 
