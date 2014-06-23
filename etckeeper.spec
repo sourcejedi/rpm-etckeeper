@@ -2,8 +2,8 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:      etckeeper
-Version:   1.11
-Release:   2%{?dist}
+Version:   1.12
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -12,6 +12,7 @@ Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}
 Source1:   README.fedora
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+BuildRequires: python-markdown
 Requires:  git >= 1.5.4
 Requires:  perl
 Requires:  crontabs
@@ -53,6 +54,12 @@ cp -av %{SOURCE1} .
 
 %build
 make %{?_smp_mflags}
+%if 0%{?fedora} || 0%{?rhel} > 6
+# the binary in python-markdown has been renamed
+markdown_py <README.md >README.html
+%else
+markdown <README.md >README.html
+%endif
 
 %install
 rm -rf %{buildroot}
@@ -71,7 +78,7 @@ fi
 
 %files
 %defattr(-, root, root, -)
-%doc GPL TODO README README.fedora
+%doc GPL TODO README.html README.fedora
 %{_bindir}/%{name}
 %{_mandir}/man8/%{name}.8*
 %dir %{_sysconfdir}/%{name}
@@ -95,6 +102,10 @@ fi
 %endif
 
 %changelog
+* Sun Jun 22 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.12-1
+- Update to 1.12.
+- Format README.md.
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.11-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
