@@ -3,7 +3,7 @@
 
 Name:      etckeeper
 Version:   1.14
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -32,6 +32,7 @@ To use bzr as backend, please also install the %{name}-bzr package.
 
 To start using the package please read %{_pkgdocdir}/README.
 
+%if 0%{?fedora} || 0%{?rhel} > 5
 %package bzr
 Summary:  Support for bzr with etckeeper
 Group:    Applications/System
@@ -42,6 +43,7 @@ BuildRequires: python-devel
 %description bzr
 This package provides a bzr backend for etckeeper, if you want to use
 etckeeper with bzr backend, install this package.
+%endif
 
 %prep
 %setup -q -n %{name}
@@ -66,7 +68,12 @@ rm -rf %{buildroot}
 make install DESTDIR=%{buildroot} INSTALL="%{__install} -p"
 %{__install} -D -p debian/cron.daily %{buildroot}%{_sysconfdir}/cron.daily/%{name}
 %{__install} -d  %{buildroot}%{_localstatedir}/cache/%{name}
+%if 0%{?fedora} || 0%{?rhel} > 5
 %{__sed} -i -e '1d' %{buildroot}%{python_sitelib}/bzrlib/plugins/%{name}/__init__.py
+%else
+rm -rf %{buildroot}%{python_sitelib}/bzrlib/plugins/%{name}
+rm -rf %{buildroot}%{python_sitelib}/bzr_%{name}-*.egg-info
+%endif
 
 %clean
 rm -rf %{buildroot}
@@ -93,15 +100,18 @@ fi
 %config(noreplace) %{_sysconfdir}/yum/pluginconf.d/%{name}.conf
 %{_localstatedir}/cache/%{name}
 
+%if 0%{?fedora} || 0%{?rhel} > 5
 %files bzr
 %defattr(-, root, root, -)
 %doc GPL
 %{python_sitelib}/bzrlib/plugins/%{name}
-%if 0%{?fedora} || 0%{?rhel} > 5
 %{python_sitelib}/bzr_%{name}-*.egg-info
 %endif
 
 %changelog
+* Thu Dec 18 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.14-2
+- Disable bzr plugin on epel5.
+
 * Fri Sep  5 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.14-1
 - Update to 1.14.
 
