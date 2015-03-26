@@ -26,7 +26,7 @@
 %endif
 
 Name:      etckeeper
-Version:   1.18
+Version:   1.18.1
 Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
@@ -213,6 +213,9 @@ fi
 
 
 %changelog
+* Thu Mar 26 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-1
+- Update to 0.18.1.
+
 * Fri Mar 20 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18-1
 - Update to 1.18.
 - Update upstream URLs.
