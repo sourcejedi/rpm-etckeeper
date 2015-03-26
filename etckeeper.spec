@@ -77,7 +77,11 @@ etckeeper with bzr backend, install this package.
 %package dnf
 Summary:  DNF plugin for etckeeper support
 Group:    Applications/System
+%if 0%{?dnf_uses_python3}
+BuildRequires: python3-devel
+%else
 BuildRequires: python2-devel
+%endif # dnf_uses_python3
 BuildRequires: dnf
 BuildRequires: dnf-plugins-core
 Requires: %{name} = %{version}-%{release}
@@ -215,6 +219,7 @@ fi
 %changelog
 * Thu Mar 26 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-1
 - Update to 0.18.1.
+- Add missing dependency on python3-devel for dnf plugin on F23+.
 
 * Fri Mar 20 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18-1
 - Update to 1.18.
