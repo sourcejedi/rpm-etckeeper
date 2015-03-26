@@ -1,15 +1,40 @@
-%global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%{!?__python2: %global __python2 /usr/bin/python2}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
+
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
+%if 0%{?fedora} || 0%{?rhel} > 5
+%global with_bzr 1
+%else
+%global with_bzr 0
+%endif
+
+%if 0%{?fedora}
+# enable for epel7 later
+%global with_dnf 1
+%if 0%{fedora} >= 23
+%global dnf_uses_python3 1
+%global __python_dnf %{__python3}
+%else
+%global dnf_uses_python3 0
+%global __python_dnf %{__python2}
+%endif
+%else
+%global with_dnf 0
+%endif
+
 Name:      etckeeper
-Version:   1.14
-Release:   2%{?dist}
+Version:   1.18
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
-URL:       http://kitenet.net/~joey/code/etckeeper/
-Source0:   http://ftp.debian.org/debian/pool/main/e/etckeeper/%{name}_%{version}.tar.gz
+URL:       http://etckeeper.branchable.com/
+Source0:   https://github.com/joeyh/etckeeper/archive/%{version}/%{name}-%{version}.tar.gz
 Source1:   README.fedora
+Patch0:    etckeeper-makefile-remove-python-plugins.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 BuildRequires: python-markdown
@@ -32,30 +57,75 @@ To use bzr as backend, please also install the %{name}-bzr package.
 
 To start using the package please read %{_pkgdocdir}/README.
 
-%if 0%{?fedora} || 0%{?rhel} > 5
+
+%if 0%{?with_bzr}
 %package bzr
 Summary:  Support for bzr with etckeeper
 Group:    Applications/System
-Requires: %{name} = %{version}-%{release} bzr
+BuildRequires: python2-devel
 BuildRequires: bzr
-BuildRequires: python-devel
+Requires: %{name} = %{version}-%{release}
+Requires: bzr
 
 %description bzr
 This package provides a bzr backend for etckeeper, if you want to use
 etckeeper with bzr backend, install this package.
-%endif
+%endif # with_bzr
+
+
+%if 0%{?with_dnf}
+%package dnf
+Summary:  DNF plugin for etckeeper support
+Group:    Applications/System
+BuildRequires: python2-devel
+BuildRequires: dnf
+BuildRequires: dnf-plugins-core
+Requires: %{name} = %{version}-%{release}
+Requires: dnf
+Requires: dnf-plugins-core
+
+%description dnf
+This package provides a DNF plugin for etckeeper. If you want to use
+etckeeper with DNF, install this package.
+%endif # with_dnf
+
 
 %prep
-%setup -q -n %{name}
-%{__perl} -pi -e '
-    s|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|;
-    s|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|;
-    ' etckeeper.conf
-%{__sed} -i -e '1d' yum-etckeeper.py
+%setup -q
+%patch0 -p1
+sed -e 's|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|' \
+    -e 's|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|' \
+    -i etckeeper.conf
+sed -e 's|^prefix=.*|prefix=%{_prefix}|' \
+    -e 's|^bindir=.*|bindir=%{_bindir}|' \
+    -e 's|^etcdir=.*|etcdir=%{_sysconfdir}|' \
+    -e 's|^mandir=.*|mandir=%{_mandir}|' \
+    -e 's|^vardir=.*|vardir=%{_localstatedir}|' \
+    -e 's|^INSTALL=.*|INSTALL=install -p|' \
+    -e 's|^CP=.*|CP=cp -pR|' \
+    -i Makefile
+# move each plugin in its own subdirectory, so each has its own build/
+# directory
+mkdir bzr-plugin ; mv etckeeper-bzr bzr-plugin
+mkdir dnf-plugin ; mv etckeeper-dnf dnf-plugin
 cp -av %{SOURCE1} .
+
 
 %build
 make %{?_smp_mflags}
+
+%if 0%{?with_bzr}
+pushd bzr-plugin
+%{__python2} etckeeper-bzr/__init__.py build
+popd
+%endif
+
+%if 0%{?with_dnf}
+pushd dnf-plugin
+%{__python_dnf} etckeeper-dnf/etckeeper.py build
+popd
+%endif
+
 %if 0%{?fedora} || 0%{?rhel} > 6
 # the binary in python-markdown has been renamed
 markdown_py <README.md >README.html
@@ -63,29 +133,45 @@ markdown_py <README.md >README.html
 markdown <README.md >README.html
 %endif
 
+
 %install
 rm -rf %{buildroot}
-make install DESTDIR=%{buildroot} INSTALL="%{__install} -p"
-%{__install} -D -p debian/cron.daily %{buildroot}%{_sysconfdir}/cron.daily/%{name}
-%{__install} -d  %{buildroot}%{_localstatedir}/cache/%{name}
-%if 0%{?fedora} || 0%{?rhel} > 5
-%{__sed} -i -e '1d' %{buildroot}%{python_sitelib}/bzrlib/plugins/%{name}/__init__.py
-%else
-rm -rf %{buildroot}%{python_sitelib}/bzrlib/plugins/%{name}
-rm -rf %{buildroot}%{python_sitelib}/bzr_%{name}-*.egg-info
+make install DESTDIR=%{buildroot}
+
+%if 0%{?with_bzr}
+pushd bzr-plugin
+%{__python2} etckeeper-bzr/__init__.py install -O1 --skip-build --root %{buildroot}
+popd
 %endif
+
+%if 0%{?with_dnf}
+pushd dnf-plugin
+%{__python_dnf} etckeeper-dnf/etckeeper.py install -O1 --skip-build --root %{buildroot}
+popd
+%endif
+
+install -D -p debian/cron.daily %{buildroot}%{_sysconfdir}/cron.daily/%{name}
+install -d  %{buildroot}%{_localstatedir}/cache/%{name}
+
 
 %clean
 rm -rf %{buildroot}
+
 
 %post
 if [ $1 -gt 1 ] ; then
    %{_bindir}/%{name} update-ignore
 fi
 
+
 %files
 %defattr(-, root, root, -)
-%doc GPL TODO README.html README.fedora
+%doc README.html README.fedora
+%if 0%{?_licensedir:1}
+%license GPL
+%else
+%doc GPL
+%endif # licensedir
 %{_bindir}/%{name}
 %{_mandir}/man8/%{name}.8*
 %dir %{_sysconfdir}/%{name}
@@ -100,15 +186,39 @@ fi
 %config(noreplace) %{_sysconfdir}/yum/pluginconf.d/%{name}.conf
 %{_localstatedir}/cache/%{name}
 
-%if 0%{?fedora} || 0%{?rhel} > 5
+
+%if 0%{?with_bzr}
 %files bzr
 %defattr(-, root, root, -)
-%doc GPL
-%{python_sitelib}/bzrlib/plugins/%{name}
-%{python_sitelib}/bzr_%{name}-*.egg-info
-%endif
+%{python2_sitelib}/bzrlib/plugins/%{name}
+%{python2_sitelib}/bzr_%{name}-*.egg-info
+%endif # with_bzr
+
+
+%if 0%{?with_dnf}
+%files dnf
+%defattr(-, root, root, -)
+%if 0%{?dnf_uses_python3}
+%{python3_sitelib}/dnf-plugins/%{name}.py
+%exclude %{python3_sitelib}/dnf-plugins/__init__.py
+%{python3_sitelib}/dnf-plugins/__pycache__/%{name}.*
+%exclude %{python3_sitelib}/dnf-plugins/__pycache__/__init__.*
+%{python3_sitelib}/dnf_%{name}-*.egg-info
+%else
+%{python2_sitelib}/dnf-plugins/%{name}.py*
+%exclude %{python2_sitelib}/dnf-plugins/__init__.py*
+%{python2_sitelib}/dnf_%{name}-*.egg-info
+%endif # dnf_uses_python3
+%endif # with_dnf
+
 
 %changelog
+* Fri Mar 20 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18-1
+- Update to 1.18.
+- Update upstream URLs.
+- Package DNF plugin.
+- Slightly modernize spec file.
+
 * Thu Dec 18 2014 Thomas Moschny <thomas.moschny@gmx.de> - 1.14-2
 - Disable bzr plugin on epel5.
 
