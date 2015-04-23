@@ -27,7 +27,7 @@
 
 Name:      etckeeper
 Version:   1.18.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -132,9 +132,9 @@ popd
 
 %if 0%{?fedora} || 0%{?rhel} > 6
 # the binary in python-markdown has been renamed
-markdown_py <README.md >README.html
+markdown_py -f README.html README.md
 %else
-markdown <README.md >README.html
+markdown -f README.html README.md
 %endif
 
 
@@ -217,6 +217,9 @@ fi
 
 
 %changelog
+* Thu Apr 23 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-2
+- Fix markdown generation (rhbz#1213776).
+
 * Thu Mar 26 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-1
 - Update to 0.18.1.
 - Add missing dependency on python3-devel for dnf plugin on F23+.
