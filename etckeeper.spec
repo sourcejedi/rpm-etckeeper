@@ -27,7 +27,7 @@
 
 Name:      etckeeper
 Version:   1.18.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -217,6 +217,9 @@ fi
 
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.18.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Thu Apr 23 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-2
 - Fix markdown generation (rhbz#1213776).
 
