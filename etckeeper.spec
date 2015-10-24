@@ -12,8 +12,11 @@
 %endif
 
 %if 0%{?fedora}
-# enable for epel7 later
+# todo: enable dnf for epel7 later
 %global with_dnf 1
+%if 0%{fedora} >= 22
+%global dnf_is_mandatory 1
+%endif
 %if 0%{fedora} >= 23
 %global dnf_uses_python3 1
 %global __python_dnf %{__python3}
@@ -26,8 +29,8 @@
 %endif
 
 Name:      etckeeper
-Version:   1.18.1
-Release:   3%{?dist}
+Version:   1.18.2
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -41,6 +44,9 @@ BuildRequires: python-markdown
 Requires:  git >= 1.5.4
 Requires:  perl
 Requires:  crontabs
+%if 0%{?dnf_is_mandatory}
+Requires:  %{name}-dnf = %{version}-%{release}
+%endif # dnf_is_mandatory
 
 %description
 The etckeeper program is a tool to let /etc be stored in a git,
@@ -217,14 +223,19 @@ fi
 
 
 %changelog
+* Sat Oct 24 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.2-1
+- Update to etckeeper 1.18.2.
+- Depend on dnf for F22+ (rhbz#1229131).
+- Minor changelog fixes.
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.18.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
 * Thu Apr 23 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-2
-- Fix markdown generation (rhbz#1213776).
+- Fix HTML generation from markdown (rhbz#1213776).
 
 * Thu Mar 26 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.1-1
-- Update to 0.18.1.
+- Update to 1.18.1.
 - Add missing dependency on python3-devel for dnf plugin on F23+.
 
 * Fri Mar 20 2015 Thomas Moschny <thomas.moschny@gmx.de> - 1.18-1
