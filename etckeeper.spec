@@ -30,7 +30,7 @@
 
 Name:      etckeeper
 Version:   1.18.2
-Release:   2%{?dist}
+Release:   3%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -223,6 +223,9 @@ fi
 
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.18.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Tue Nov 10 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.18.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Changes/python3.5
 
