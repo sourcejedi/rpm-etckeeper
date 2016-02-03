@@ -30,7 +30,7 @@
 
 Name:      etckeeper
 Version:   1.18.2
-Release:   3%{?dist}
+Release:   4%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -175,7 +175,6 @@ fi
 
 
 %files
-%defattr(-, root, root, -)
 %doc README.html README.fedora
 %if 0%{?_licensedir:1}
 %license GPL
@@ -188,8 +187,10 @@ fi
 %{_sysconfdir}/%{name}/*.d
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %{_sysconfdir}/cron.daily/%{name}
+%if !(0%{?fedora} || 0%{?rhel} >= 7)
 %dir %{_sysconfdir}/bash_completion.d
-%config(noreplace) %{_sysconfdir}/bash_completion.d/%{name}
+%endif
+%{_sysconfdir}/bash_completion.d/%{name}
 %dir %{_prefix}/lib/yum-plugins
 %{_prefix}/lib/yum-plugins/%{name}.*
 %dir %{_sysconfdir}/yum/pluginconf.d
@@ -199,7 +200,6 @@ fi
 
 %if 0%{?with_bzr}
 %files bzr
-%defattr(-, root, root, -)
 %{python2_sitelib}/bzrlib/plugins/%{name}
 %{python2_sitelib}/bzr_%{name}-*.egg-info
 %endif # with_bzr
@@ -207,7 +207,6 @@ fi
 
 %if 0%{?with_dnf}
 %files dnf
-%defattr(-, root, root, -)
 %if 0%{?dnf_uses_python3}
 %{python3_sitelib}/dnf-plugins/%{name}.py
 %exclude %{python3_sitelib}/dnf-plugins/__init__.py
@@ -223,6 +222,10 @@ fi
 
 
 %changelog
+* Wed Feb  3 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.2-4
+- Do not own /etc/bash_completion.d on Fedora and EPEL>=7.
+- Drop %%defattr.
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.18.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
