@@ -29,8 +29,8 @@
 %endif
 
 Name:      etckeeper
-Version:   1.18.2
-Release:   4%{?dist}
+Version:   1.18.3
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -187,10 +187,9 @@ fi
 %{_sysconfdir}/%{name}/*.d
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %{_sysconfdir}/cron.daily/%{name}
-%if !(0%{?fedora} || 0%{?rhel} >= 7)
-%dir %{_sysconfdir}/bash_completion.d
-%endif
-%{_sysconfdir}/bash_completion.d/%{name}
+%dir %{_datadir}/bash-completion
+%dir %{_datadir}/bash-completion/completions
+%{_datadir}/bash-completion/completions/%{name}
 %dir %{_prefix}/lib/yum-plugins
 %{_prefix}/lib/yum-plugins/%{name}.*
 %dir %{_sysconfdir}/yum/pluginconf.d
@@ -222,6 +221,10 @@ fi
 
 
 %changelog
+* Mon Feb 22 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.3-1
+- Update to 1.18.3.
+- Bash completions have been moved to /usr/share/bash-completion.
+
 * Wed Feb  3 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.2-4
 - Do not own /etc/bash_completion.d on Fedora and EPEL>=7.
 - Drop %%defattr.
