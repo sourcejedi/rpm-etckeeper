@@ -30,7 +30,7 @@
 
 Name:      etckeeper
 Version:   1.18.3
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -163,6 +163,13 @@ popd
 install -D -p debian/cron.daily %{buildroot}%{_sysconfdir}/cron.daily/%{name}
 install -d  %{buildroot}%{_localstatedir}/cache/%{name}
 
+# on RHEL < 7, move the completion file back to /etc/bash_completion.d
+%if !(0%{?fedora} || 0%{?rhel} >= 7)
+install -d %{buildroot}%{_sysconfdir}/bash_completion.d
+mv %{buildroot}%{_datadir}/bash-completion/completions/%{name} \
+  %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}
+%endif
+
 
 %clean
 rm -rf %{buildroot}
@@ -187,9 +194,14 @@ fi
 %{_sysconfdir}/%{name}/*.d
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %{_sysconfdir}/cron.daily/%{name}
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %dir %{_datadir}/bash-completion
 %dir %{_datadir}/bash-completion/completions
 %{_datadir}/bash-completion/completions/%{name}
+%else
+%dir %{_sysconfdir}/bash_completion.d
+%{_sysconfdir}/bash_completion.d/%{name}
+%endif
 %dir %{_prefix}/lib/yum-plugins
 %{_prefix}/lib/yum-plugins/%{name}.*
 %dir %{_sysconfdir}/yum/pluginconf.d
@@ -221,6 +233,9 @@ fi
 
 
 %changelog
+* Wed Mar  2 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.3-2
+- Move completion file back to /etc/bash_completion.d on EPEL<7.
+
 * Mon Feb 22 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.3-1
 - Update to 1.18.3.
 - Bash completions have been moved to /usr/share/bash-completion.
