@@ -30,7 +30,7 @@
 
 Name:      etckeeper
 Version:   1.18.3
-Release:   2%{?dist}
+Release:   3%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -233,6 +233,9 @@ fi
 
 
 %changelog
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.18.3-3
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
 * Wed Mar  2 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.3-2
 - Move completion file back to /etc/bash_completion.d on EPEL<7.
 
