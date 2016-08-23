@@ -7,30 +7,25 @@
 
 %if 0%{?fedora} || 0%{?rhel} > 5
 %global with_bzr 1
-%else
-%global with_bzr 0
 %endif
 
 %if 0%{?fedora}
-# todo: enable dnf for epel7 later
 %global with_dnf 1
-%if 0%{fedora} >= 22
 %global dnf_is_mandatory 1
-%endif
-%if 0%{fedora} >= 23
 %global dnf_uses_python3 1
-%global __python_dnf %{__python3}
-%else
-%global dnf_uses_python3 0
-%global __python_dnf %{__python2}
 %endif
-%else
-%global with_dnf 0
+
+%if 0%{?rhel} >= 7
+%global with_dnf 1
+%endif
+
+%if 0%{?fedora} || 0%{?rhel} >= 7
+%global with_systemd 1
 %endif
 
 Name:      etckeeper
-Version:   1.18.3
-Release:   3%{?dist}
+Version:   1.18.5
+Release:   1%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -47,6 +42,12 @@ Requires:  crontabs
 %if 0%{?dnf_is_mandatory}
 Requires:  %{name}-dnf = %{version}-%{release}
 %endif # dnf_is_mandatory
+%if 0%{?with_systemd}
+BuildRequires:  systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+%endif # with_systemd
 
 %description
 The etckeeper program is a tool to let /etc be stored in a git,
@@ -103,8 +104,10 @@ etckeeper with DNF, install this package.
 %prep
 %setup -q
 %patch0 -p1
-sed -e 's|HIGHLEVEL_PACKAGE_MANAGER=apt|HIGHLEVEL_PACKAGE_MANAGER=yum|' \
-    -e 's|LOWLEVEL_PACKAGE_MANAGER=dpkg|LOWLEVEL_PACKAGE_MANAGER=rpm|' \
+# we set yum here, so the yum plugin gets built, and change that to
+# dnf later, if needed
+sed -e 's|HIGHLEVEL_PACKAGE_MANAGER=.*|HIGHLEVEL_PACKAGE_MANAGER=yum|' \
+    -e 's|LOWLEVEL_PACKAGE_MANAGER=.*|LOWLEVEL_PACKAGE_MANAGER=rpm|' \
     -i etckeeper.conf
 sed -e 's|^prefix=.*|prefix=%{_prefix}|' \
     -e 's|^bindir=.*|bindir=%{_bindir}|' \
@@ -114,6 +117,10 @@ sed -e 's|^prefix=.*|prefix=%{_prefix}|' \
     -e 's|^INSTALL=.*|INSTALL=install -p|' \
     -e 's|^CP=.*|CP=cp -pR|' \
     -i Makefile
+%if 0%{?with_systemd}
+sed -e 's|^systemddir=.*|systemddir=%{_unitdir}|' \
+    -i Makefile
+%endif
 # move each plugin in its own subdirectory, so each has its own build/
 # directory
 mkdir bzr-plugin ; mv etckeeper-bzr bzr-plugin
@@ -132,11 +139,15 @@ popd
 
 %if 0%{?with_dnf}
 pushd dnf-plugin
-%{__python_dnf} etckeeper-dnf/etckeeper.py build
+%if 0%{?dnf_uses_python3}
+%{__python3} etckeeper-dnf/etckeeper.py build
+%else
+%{__python2} etckeeper-dnf/etckeeper.py build
+%endif
 popd
 %endif
 
-%if 0%{?fedora} || 0%{?rhel} > 6
+%if 0%{?fedora} || 0%{?rhel} >= 7
 # the binary in python-markdown has been renamed
 markdown_py -f README.html README.md
 %else
@@ -156,8 +167,17 @@ popd
 
 %if 0%{?with_dnf}
 pushd dnf-plugin
-%{__python_dnf} etckeeper-dnf/etckeeper.py install -O1 --skip-build --root %{buildroot}
+%if 0%{?dnf_uses_python3}
+%{__python3} etckeeper-dnf/etckeeper.py install -O1 --skip-build --root %{buildroot}
+%else
+%{__python2} etckeeper-dnf/etckeeper.py install -O1 --skip-build --root %{buildroot}
+%endif
 popd
+
+%if 0%{?dnf_is_mandatory}
+sed -e 's|HIGHLEVEL_PACKAGE_MANAGER=.*|HIGHLEVEL_PACKAGE_MANAGER=dnf|' \
+    -i %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+%endif
 %endif
 
 install -D -p debian/cron.daily %{buildroot}%{_sysconfdir}/cron.daily/%{name}
@@ -170,6 +190,13 @@ mv %{buildroot}%{_datadir}/bash-completion/completions/%{name} \
   %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}
 %endif
 
+# remove unit files if not used (note: /lib/systemd/system is the
+# original, hardcoded location from the etckeeper Makefile)
+%if !0%{?with_systemd}
+rm %{buildroot}/lib/systemd/system/%{name}.service
+rm %{buildroot}/lib/systemd/system/%{name}.timer
+%endif
+
 
 %clean
 rm -rf %{buildroot}
@@ -179,6 +206,24 @@ rm -rf %{buildroot}
 if [ $1 -gt 1 ] ; then
    %{_bindir}/%{name} update-ignore
 fi
+%if 0%{?with_systemd}
+%systemd_post %{name}.service
+%systemd_post %{name}.timer
+%endif # with_systemd
+
+
+%preun
+%if 0%{?with_systemd}
+%systemd_preun %{name}.service
+%systemd_preun %{name}.timer
+%endif # with_systemd
+
+
+%postun
+%if 0%{?with_systemd}
+%systemd_postun %{name}.service
+%systemd_postun %{name}.timer
+%endif # with_systemd
 
 
 %files
@@ -192,6 +237,7 @@ fi
 %{_mandir}/man8/%{name}.8*
 %dir %{_sysconfdir}/%{name}
 %{_sysconfdir}/%{name}/*.d
+%{_sysconfdir}/%{name}/daily
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %{_sysconfdir}/cron.daily/%{name}
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -207,6 +253,10 @@ fi
 %dir %{_sysconfdir}/yum/pluginconf.d
 %config(noreplace) %{_sysconfdir}/yum/pluginconf.d/%{name}.conf
 %{_localstatedir}/cache/%{name}
+%if 0%{?with_systemd}
+%{_unitdir}/%{name}.service
+%{_unitdir}/%{name}.timer
+%endif # with_systemd
 
 
 %if 0%{?with_bzr}
@@ -233,6 +283,9 @@ fi
 
 
 %changelog
+* Tue Aug 23 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.5-1
+- Update to 1.18.5.
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.18.3-3
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
