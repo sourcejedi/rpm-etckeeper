@@ -25,7 +25,7 @@
 
 Name:      etckeeper
 Version:   1.18.5
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -283,6 +283,9 @@ fi
 
 
 %changelog
+* Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 1.18.5-2
+- Rebuild for Python 3.6
+
 * Tue Aug 23 2016 Thomas Moschny <thomas.moschny@gmx.de> - 1.18.5-1
 - Update to 1.18.5.
 
