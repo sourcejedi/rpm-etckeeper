@@ -25,7 +25,7 @@
 
 Name:      etckeeper
 Version:   1.18.5
-Release:   3%{?dist}
+Release:   4%{?dist}
 Summary:   Store /etc in a SCM system (git, mercurial, bzr or darcs)
 Group:     Applications/System
 License:   GPLv2+
@@ -37,7 +37,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 BuildRequires: python-markdown
 Requires:  git >= 1.5.4
-Requires:  perl
+Requires:  perl-interpreter
 Requires:  crontabs
 %if 0%{?dnf_is_mandatory}
 Requires:  %{name}-dnf = %{version}-%{release}
@@ -283,6 +283,10 @@ fi
 
 
 %changelog
+* Thu Jul 13 2017 Petr Pisar <ppisar@redhat.com> - 1.18.5-4
+- perl dependency renamed to perl-interpreter
+  <https://fedoraproject.org/wiki/Changes/perl_Package_to_Install_Core_Modules>
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.18.5-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
