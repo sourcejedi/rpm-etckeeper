@@ -39,6 +39,9 @@ BuildRequires: python-markdown
 Requires:  git >= 1.5.4
 Requires:  perl-interpreter
 Requires:  crontabs
+Requires:  findutils
+Requires:  hostname
+Requires:  which
 %if 0%{?dnf_is_mandatory}
 Requires:  %{name}-dnf = %{version}-%{release}
 %endif # dnf_is_mandatory
